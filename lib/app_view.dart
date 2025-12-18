@@ -15,8 +15,8 @@ class AppView extends StatelessWidget {
               const Text('hello'),
               ElevatedButton(
                 onPressed: () async {
-                  final res = await GetIt.I<Dio>().request('/api/members/v1/app/buyer/dic_document_type', options: Options(method: 'POST'));
-                  print(res);
+                  final res = await GetIt.I<Dio>().request('/api/ticket/v1/auth/performance/infoMain/listPage', options: Options(method: 'POST'), data: {'pageNum': 1, 'pageSize': 2, 'createDeptIds': [227]});
+                  print('hello $res.');
                 },
                 child: const Text('获取icon')
               ),
