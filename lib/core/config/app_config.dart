@@ -29,7 +29,7 @@ class AppConfig {
       default:
         environment = Environment.dev;
     }
-    await dotenv.load(fileName: '.env-$appEnv');
+    await dotenv.load(fileName: '.env.$appEnv');
     return AppConfig(
       apiBaseUrl: dotenv.get('API_BASE_URL'),
       enableLogging: environment == Environment.dev,

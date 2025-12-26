@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:backsystem_desktop_app/features/features.dart';
 
 class AppView extends StatelessWidget {
   const AppView({ super.key });
@@ -15,8 +16,8 @@ class AppView extends StatelessWidget {
               const Text('hello'),
               ElevatedButton(
                 onPressed: () async {
-                  final res = await GetIt.I<Dio>().request('/api/ticket/v1/auth/performance/infoMain/listPage', options: Options(method: 'POST'), data: {'pageNum': 1, 'pageSize': 2, 'createDeptIds': [227]});
-                  print('hello $res.');
+                  final auth = AuthenticationRepository();
+                  await auth.logIn(username: 'xcxAdmin', password: 'Wag@2024', code: '0', uuid: 'bc4ab8dbd73e4e17b39eafca7967c880');
                 },
                 child: const Text('获取icon')
               ),

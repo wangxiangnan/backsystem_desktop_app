@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:backsystem_desktop_app/core/config/app_config.dart';
 import 'package:dio/dio.dart';
 import 'sign.dart';
@@ -9,10 +11,10 @@ final dio = Dio(
       seconds: 10,
     ),
     connectTimeout: Duration(
-      seconds: 10,
+      seconds: 20,
     ),
     receiveTimeout: Duration(
-      minutes: 2
+      seconds: 10
     ),
     baseUrl: GetIt.I.get<AppConfig>().apiBaseUrl,
     method: 'POST',
@@ -24,14 +26,21 @@ final dio = Dio(
       final newOptions = options.copyWith(
         headers: {
           ...options.headers,
-          'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjhhNDFhM2E1LWE4YjMtNGJjYi04NWUzLWVjNWEzZjBmNTI2ZiJ9.mAxebdlYV7XyTZ2QV9VFjcPqHKRMug6JdWMfxfhdng4yJm3P_DOWmf4GsxI0q1smtE9-HSapWemmlJukWmTmyA',
+          'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6Ijg2YzlkNDMwLWIyMzgtNGUwNi05MDlkLTI5ZmMyNTQyZmUzYyJ9.geiZ8QOWTp_Feuy4LtlSqjzg2l6JO1s56VkEa6RrtHXqPsOReT1bOXL6_vzMKUtlFhCWSIo129pAzejescAilw',
           'sign': sign
         }
       );
       handler.next(newOptions);
     },
-    onResponse:(response, handler) {
-      handler.next(response);
+    onResponse: (res, handler) {
+      final data = res.data;
+      if (data['code'] == 401) {
+        return handler.reject(DioException.badCertificate(requestOptions: res.requestOptions));
+      }
+      if (data['code'] != 200) {
+        return handler.reject(DioException.badResponse(requestOptions: res.requestOptions, statusCode: data['code'], response: res),);
+      }
+      handler.next(Response(requestOptions: res.requestOptions, data: res.data));
     },
   )
 );
