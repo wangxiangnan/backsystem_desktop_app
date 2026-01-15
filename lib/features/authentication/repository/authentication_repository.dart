@@ -17,15 +17,15 @@ class AuthenticationRepository {
     yield AuthenticationStatus.unauthenticated;
     yield* _controller.stream;
   }
-  Future<void> logIn({
+  Future<String> logIn({
     required String username,
     required String password,
     required String code,
     required String uuid,
   }) async {
-    final res = await GetIt.I.get<Dio>().post('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
-    print('res: $res');
+    final res = await GetIt.I.get<Dio>().post<Map<String, String>>('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
     _controller.add(AuthenticationStatus.authenticated);
+    return res;
   }
 
   void logOut() {

@@ -47,7 +47,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         ),
       );
       try {
-        await _authenticationRepository.logIn(
+        final token = await _authenticationRepository.logIn(
           username: state.username.value,
           password: state.password.value,
           code: '4',
