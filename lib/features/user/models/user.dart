@@ -14,6 +14,8 @@ class User extends Equatable {
   @override
   List<Object> get props => [id, name, nickName, deptId, deptName, permissions, roles];
 
+  static const empty = User(id: -1, name: '', nickName: '', deptId: 0, deptName: '', permissions: [], roles: []);
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['user']['userId'],
