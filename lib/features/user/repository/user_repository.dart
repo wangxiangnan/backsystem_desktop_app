@@ -10,6 +10,7 @@ class UserRepository {
     final res = await GetIt.I.get<Dio>().get<Map<String, dynamic>>(
       '/getInfo',
     );
+    print('user-repository-res: $res');
     final data = res.data;
     if (data != null) {
       _user = User.fromJson(data);

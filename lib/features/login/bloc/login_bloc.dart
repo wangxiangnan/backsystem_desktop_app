@@ -47,11 +47,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         ),
       );
       try {
-        final token = await _authenticationRepository.logIn(
+        await _authenticationRepository.logIn(
           username: state.username.value,
           password: state.password.value,
-          code: '4',
-          uuid: 'b9ebf138429f467c8e949f269c111630',
+          code: '11',
+          uuid: '65833c2a3fba4cf7bd54deb260b6c42f',
         );
         emit(state.copyWith(status: FormzSubmissionStatus.success));
       } catch (_) {
