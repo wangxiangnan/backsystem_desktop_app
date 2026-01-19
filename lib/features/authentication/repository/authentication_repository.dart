@@ -21,6 +21,11 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
+  Future<dynamic> getCaptchaData() async {
+    final res = await GetIt.I.get<Dio>().get('/captchaImage');
+    return res.data;
+  }
+
   Future<void> logIn({
     required String username,
     required String password,
@@ -28,8 +33,8 @@ class AuthenticationRepository {
     required String uuid,
   }) async {
     try {
-      final res = await GetIt.I.get<Dio>().post<String>('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
-      setToken(res.data!);
+      final res = await GetIt.I.get<Dio>().post('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
+      setToken(res.data['token']);
       _controller.add(AuthenticationStatus.authenticated);
     } catch (e) {
       print(e);

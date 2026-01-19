@@ -1,54 +1,16 @@
-import 'package:bloc/bloc.dart';
+import 'package:formz/formz.dart';
 
-void main() async {
-  // 使用bloc
-  final bloc = CounterBloc();
-  print(bloc.state);
-  bloc.add(CounterIncrementPressed());
-  await Future.delayed(Duration.zero);
-  print(bloc.state);
-  await bloc.close();
+class Person {
+  Person.named(this.name);
+
+  String name;
 }
 
-// 创建一个bloc
-/// The events which `CounterBloc` will react to
-sealed class CounterEvent {}
+class Worker extends Person {
+  // 如果前面调用了super的参数，那么后面就不需要了
+  Worker.named(super.name) : super.named();
+}
 
-/// Notifies bloc to increment state.
-final class CounterIncrementPressed extends CounterEvent {}
-final class CounterDecrementPressed extends CounterEvent {}
-
-/// A `CounterBloc` which handles converting `CounterEvent`s into `int`s.
-class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc() : super(0) {
-    on<CounterIncrementPressed>((event, emit) {
-      print('on<CounterIncrementPressed> -- $event');
-      emit(state + 1);
-    });
-    on<CounterDecrementPressed>((event, emit) => emit(state - 1));
-  }
-
-  @override
-  void onEvent(CounterEvent event) {
-    super.onEvent(event);
-    print('onEvent -- $event');
-  }
-
-  @override
-  void onChange(Change<int> change) {
-    super.onChange(change);
-    print('onChange -- $change');
-  }
-
-  @override
-  void onTransition(Transition<CounterEvent, int> transition) {
-    super.onTransition(transition);
-    print('onTransition -- $transition');
-  }
-
-  @override
-  void onDone(CounterEvent event, [Object? error, StackTrace? stackTrace]) {
-    super.onDone(event, error, stackTrace);
-    print('onDone -- $event, $error, $stackTrace');
-  }
+void main() {
+  
 }

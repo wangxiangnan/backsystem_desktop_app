@@ -15,6 +15,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginUsernameChanged>(_onUsernameChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
+    on<LoginCodeChanged>(_onCodeChanged);
+    on<LoginCaptchaClicked>(_loginCaptchaClicked);
   }
 
   final AuthenticationRepository _authenticationRepository;
@@ -24,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(
       state.copyWith(
         username: username,
-        isValid: Formz.validate([state.password, username]),
+        isValid: Formz.validate([state.password, username, state.code]),
       ),
     );
   }
@@ -34,7 +36,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(
       state.copyWith(
         password: password,
-        isValid: Formz.validate([password, state.username]),
+        isValid: Formz.validate([password, state.username, state.code]),
+      ),
+    );
+  }
+
+  void _onCodeChanged(LoginCodeChanged event, Emitter<LoginState> emit) {
+    final code = Code.dirty(event.code);
+    emit(
+      state.copyWith(
+        code: code,
+        isValid: Formz.validate([code, state.username, state.password]),
+      )
+    );
+  }
+
+  void _loginCaptchaClicked(LoginCaptchaClicked event, Emitter<LoginState> emit) async {
+    final res = await _authenticationRepository.getCaptchaData();
+    emit(
+      state.copyWith(
+        uuid: res['uuid'],
+        captchaImg: res['img'],
       ),
     );
   }
@@ -50,8 +72,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await _authenticationRepository.logIn(
           username: state.username.value,
           password: state.password.value,
-          code: '11',
-          uuid: '65833c2a3fba4cf7bd54deb260b6c42f',
+          code: state.code.value,
+          uuid: state.uuid,
         );
         emit(state.copyWith(status: FormzSubmissionStatus.success));
       } catch (_) {

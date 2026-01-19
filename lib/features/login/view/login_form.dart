@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:formz/formz.dart';
 
 import '../bloc/login_bloc.dart';
@@ -10,6 +12,7 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<LoginBloc>().add(LoginCaptchaClicked());
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status.isFailure) {
@@ -28,6 +31,8 @@ class LoginForm extends StatelessWidget {
             _UsernameInput(),
             const Padding(padding: EdgeInsets.all(12),),
             _PasswordInput(),
+            const Padding(padding: EdgeInsets.all(12),),
+            _CodeInput(),
             const Padding(padding: EdgeInsets.all(12),),
             _LoginButton(),
           ],
@@ -60,7 +65,7 @@ class _UsernameInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final dispayError = context.select((LoginBloc bloc) => bloc.state.password.displayError);
+    final displayError = context.select((LoginBloc bloc) => bloc.state.password.displayError);
     return TextField(
       key: const Key('loginForm_passwordInput_textField'),
       onChanged: (password) {
@@ -69,8 +74,48 @@ class _PasswordInput extends StatelessWidget {
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'password',
-        errorText: dispayError != null ? 'invalid password' : null,
+        errorText: displayError != null ? 'invalid password' : null,
       ),
+    );
+  }
+}
+
+class _CodeInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final displayError = context.select((LoginBloc bloc) => bloc.state.code.displayError);
+    final codeImg = context.select((LoginBloc bloc) => bloc.state.captchaImg);
+    return Row(
+      spacing: 20,
+      children: [
+        Expanded(
+          flex: 1,
+          child: TextField(
+            key: const Key('loginForm_codeInput_textField'),
+            onChanged: (value) {
+              context.read<LoginBloc>().add(LoginCodeChanged(value));
+            },
+            decoration: InputDecoration(
+              labelText: 'code',
+              errorText: displayError != null ? 'invalid code' : null,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 120,
+          height: 60,
+          child: GestureDetector(
+            onTap: () {
+              context.read<LoginBloc>().add(LoginCaptchaClicked());
+            },
+            child: codeImg.isNotEmpty ? Image.memory(
+              base64Decode(codeImg),
+              fit: BoxFit.cover,
+            ) : null,
+          ),
+        )
+        
+      ],
     );
   }
 }

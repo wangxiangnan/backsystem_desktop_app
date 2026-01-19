@@ -36,15 +36,21 @@ final dio = Dio(
       handler.next(newOptions);
     },
     onResponse: (response, handler) {
-      final res = jsonDecode(response.data);
-
+      final res = response.data is String ? jsonDecode(response.data) : response.data;
       if (res['code'] == 401) {
         return handler.reject(DioException.badCertificate(requestOptions: res.requestOptions));
       }
       if (res['code'] != 200) {
         return handler.reject(DioException.badResponse(requestOptions: res.requestOptions, statusCode: res['code'], response: res),);
       }
-      handler.next(Response(requestOptions: response.requestOptions, data: res['data'] ?? res['token']));
+      handler.next(
+        Response(
+          requestOptions: response.requestOptions,
+          data: res,
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        )
+      );
     },
   )
 );
