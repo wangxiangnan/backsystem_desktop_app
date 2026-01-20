@@ -38,6 +38,10 @@ final class LoginCaptchaClicked extends LoginEvent {
   const LoginCaptchaClicked();
 }
 
+final class LoginSettingFetch extends LoginEvent {
+  const LoginSettingFetch();
+}
+
 final class LoginSubmitted extends LoginEvent {
   const LoginSubmitted();
 }

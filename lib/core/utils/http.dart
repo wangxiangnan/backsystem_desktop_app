@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:backsystem_desktop_app/core/utils/auth.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'sign.dart';
 import 'package:get_it/get_it.dart';
 import '../config/config.dart';
@@ -20,6 +21,9 @@ final dio = Dio(
     ),
     baseUrl: GetIt.I.get<AppConfig>().apiBaseUrl,
     method: 'POST',
+    validateStatus: (status) {
+      return status == 200;
+    },
   )
 )..interceptors.add(
   InterceptorsWrapper(
@@ -37,11 +41,13 @@ final dio = Dio(
     },
     onResponse: (response, handler) {
       final res = response.data is String ? jsonDecode(response.data) : response.data;
+      // print(res);
       if (res['code'] == 401) {
-        return handler.reject(DioException.badCertificate(requestOptions: res.requestOptions));
+        return handler.reject(DioException.badCertificate(requestOptions: response.requestOptions));
       }
       if (res['code'] != 200) {
-        return handler.reject(DioException.badResponse(requestOptions: res.requestOptions, statusCode: res['code'], response: res),);
+        print(res);
+        return handler.reject(DioException.badResponse(requestOptions: response.requestOptions.copyWith(), statusCode: res['code'], response: response), true);
       }
       handler.next(
         Response(

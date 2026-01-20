@@ -7,12 +7,25 @@ import '../bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({ super.key });
 
   @override
-  Widget build(BuildContext context) {
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+
+  @override
+  void initState() {
+    super.initState();
     context.read<LoginBloc>().add(LoginCaptchaClicked());
+    context.read<LoginBloc>().add(LoginSettingFetch());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.select<LoginBloc, LoginState>((bloc) => bloc.state);
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status.isFailure) {
@@ -23,19 +36,28 @@ class LoginForm extends StatelessWidget {
             );
         }
       },
-      child: Align(
-        alignment: const Alignment(0, -1/3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _UsernameInput(),
-            const Padding(padding: EdgeInsets.all(12),),
-            _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12),),
-            _CodeInput(),
-            const Padding(padding: EdgeInsets.all(12),),
-            _LoginButton(),
-          ],
+      child: Container(
+        constraints: BoxConstraints.expand(),
+        decoration: BoxDecoration(
+          image: state.setting.bgImgUrl.isNotEmpty ? DecorationImage(
+            image: NetworkImage(state.setting.bgImgUrl),
+            fit: BoxFit.cover,
+          ) : null,
+        ),
+        child: Align(
+          alignment: const Alignment(0, -1/3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _UsernameInput(),
+              const Padding(padding: EdgeInsets.all(12),),
+              _PasswordInput(),
+              const Padding(padding: EdgeInsets.all(12),),
+              _CodeInput(),
+              const Padding(padding: EdgeInsets.all(12),),
+              _LoginButton(),
+            ],
+          ),
         ),
       ),
     );

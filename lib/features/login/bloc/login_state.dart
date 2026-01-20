@@ -9,6 +9,7 @@ final class LoginState extends Equatable {
     this.code = const Code.pure(),
     this.captchaImg = '',
     this.uuid = '',
+    this.setting = const Setting(),
     this.isValid = false,
   });
 
@@ -19,6 +20,7 @@ final class LoginState extends Equatable {
   final FormzSubmissionStatus status;
   final bool isValid;
   final String captchaImg;
+  final Setting setting;
 
   LoginState copyWith({
     FormzSubmissionStatus? status,
@@ -28,6 +30,7 @@ final class LoginState extends Equatable {
     bool? isValid,
     String? uuid,
     String? captchaImg,
+    Setting? setting,
   }) {
     return LoginState(
       status: status ?? this.status,
@@ -37,9 +40,10 @@ final class LoginState extends Equatable {
       code: code ?? this.code,
       uuid: uuid ?? this.uuid,
       captchaImg: captchaImg ?? this.captchaImg,
+      setting: setting ?? this.setting,
     );
   }
 
   @override
-  List<Object> get props => [status, username, password, code, uuid];
+  List<Object> get props => [status, username, password, code, uuid, setting];
 }

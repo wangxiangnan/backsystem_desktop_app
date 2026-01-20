@@ -1,12 +1,9 @@
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:backsystem_desktop_app/features/authentication/authentication.dart';
-import 'package:backsystem_desktop_app/features/login/login.dart';
-import 'package:backsystem_desktop_app/features/splash/splash.dart';
 import 'package:backsystem_desktop_app/features/user/user.dart';
-import 'package:backsystem_desktop_app/features/home/home.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 class App extends StatelessWidget {
   const App({ super.key });
@@ -42,28 +39,20 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState!;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
+    final router = GetIt.I.get<GoRouter>();
+    return MaterialApp.router(
+      routerConfig: router,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
+          listener: (_, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
-                  (route) => false,
-                );
+                router.replace('/');
               case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil(
-                  LoginPage.route(),
-                  (route) => false,
-                );
+                router.replace('/login');
               case AuthenticationStatus.unknown:
                 break;
             }
@@ -71,7 +60,8 @@ class _AppViewState extends State<AppView> {
           child: child,
         );
       },
-      onGenerateRoute: (_) => SplashPage.route(),
+
+      // onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }

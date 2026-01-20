@@ -16,8 +16,9 @@ class AuthenticationRepository {
 
   String? get token => _token;
   Stream<AuthenticationStatus> get status async* {
-    await Future<void>.delayed(const Duration(seconds: 1));
-    yield AuthenticationStatus.unauthenticated;
+    final token = getToken();
+    print('token: $token');
+    yield token == null || token.isEmpty ? AuthenticationStatus.unauthenticated : AuthenticationStatus.authenticated;
     yield* _controller.stream;
   }
 
@@ -32,14 +33,9 @@ class AuthenticationRepository {
     required String code,
     required String uuid,
   }) async {
-    try {
-      final res = await GetIt.I.get<Dio>().post('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
-      setToken(res.data['token']);
-      _controller.add(AuthenticationStatus.authenticated);
-    } catch (e) {
-      print(e);
-    }
-    
+    final res = await GetIt.I.get<Dio>().post('/login', data: { 'username': username, 'password': password, 'code': code, 'uuid': uuid });
+    setToken(res.data['token']);
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   void logOut() async {
