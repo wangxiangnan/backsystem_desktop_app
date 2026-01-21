@@ -18,16 +18,22 @@ final ValueNotifier<RoutingConfig> _routingConfig = ValueNotifier<RoutingConfig>
         },
       ),
       GoRoute(
+        path: '/splash',
+        builder: (context, state) {
+          return SplashPage();
+        },
+      ),
+      GoRoute(
         path: '/',
         builder: (context, state) {
           return HomePage();
         },
       ),
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) {
-          return SplashPage();
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          
         },
+        branches: branches
       ),
     ]
   ),

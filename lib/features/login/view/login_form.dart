@@ -1,11 +1,11 @@
 
 import 'dart:convert';
 
+import 'package:backsystem_desktop_app/features/login/login.dart';
 import 'package:formz/formz.dart';
-
-import '../bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:backsystem_desktop_app/core/constants/constants.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({ super.key });
@@ -25,7 +25,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.select<LoginBloc, LoginState>((bloc) => bloc.state);
+    final setting = context.select<LoginBloc, Setting>((bloc) => bloc.state.setting);
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status.isFailure) {
@@ -36,28 +36,49 @@ class _LoginFormState extends State<LoginForm> {
             );
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          image: state.setting.bgImgUrl.isNotEmpty ? DecorationImage(
-            image: NetworkImage(state.setting.bgImgUrl),
-            fit: BoxFit.cover,
-          ) : null,
-        ),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(32), bottomLeft: Radius.circular(32)),
-                child: Image.network(
-                  'https://res.dasheng.top/ctms_log/log_two_bg.png',
-                  width: 836,
-                ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: setting.bgImgUrl.isNotEmpty ? DecorationImage(
+                image: NetworkImage(setting.bgImgUrl),
+
+                fit: BoxFit.cover,
+              ) : null,
+            ),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(32), bottomLeft: Radius.circular(32)),
+                    child: Image.network(
+                      'https://res.dasheng.top/ctms_log/log_two_bg.png',
+                      height: 586,
+                    ),
+                  ),
+                  _Form(),
+                ],
               ),
-              _Form(),
-            ],
+            )
           ),
-        )
+          Positioned(
+            left: 60,
+            top: 26,
+            child: Image.asset(AppAssets.loginLogo, width: 260,),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                const Text('京ICP备2022030824号-1', style: TextStyle(color: Colors.white)),
+                Text(setting.copyrightText, style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

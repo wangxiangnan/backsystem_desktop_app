@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _UserId(),
+            _Greeting(),
             _LogOutButton(),
           ],
         ),
@@ -30,20 +30,20 @@ class _LogOutButton extends StatelessWidget {
       onPressed: () {
         context.read<AuthenticationBloc>().add(AuthenticationLogOutPressed());
       },
-      child: const Text('Logout'),
+      child: const Text('退出登录'),
     );
   }
 }
 
-class _UserId extends StatelessWidget {
-  const _UserId();
+class _Greeting extends StatelessWidget {
+  const _Greeting();
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.select(
-      (AuthenticationBloc bloc) => bloc.state.user.id,
+    final nickName = context.select<AuthenticationBloc, String>(
+      (AuthenticationBloc bloc) => bloc.state.user.nickName,
     );
 
-    return Text('UserId: $userId');
+    return Text('👏欢迎 $nickName 登录!', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),);
   }
 }
