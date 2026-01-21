@@ -32,38 +32,70 @@ class _LoginFormState extends State<LoginForm> {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+              const SnackBar(content: Text('登录失败！')),
             );
         }
       },
       child: Container(
-        constraints: BoxConstraints.expand(),
         decoration: BoxDecoration(
           image: state.setting.bgImgUrl.isNotEmpty ? DecorationImage(
             image: NetworkImage(state.setting.bgImgUrl),
             fit: BoxFit.cover,
           ) : null,
         ),
-        child: Align(
-          alignment: const Alignment(0, -1/3),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _UsernameInput(),
-              const Padding(padding: EdgeInsets.all(12),),
-              _PasswordInput(),
-              const Padding(padding: EdgeInsets.all(12),),
-              _CodeInput(),
-              const Padding(padding: EdgeInsets.all(12),),
-              _LoginButton(),
+              ClipRRect(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(32), bottomLeft: Radius.circular(32)),
+                child: Image.network(
+                  'https://res.dasheng.top/ctms_log/log_two_bg.png',
+                  width: 836,
+                ),
+              ),
+              _Form(),
             ],
           ),
-        ),
+        )
       ),
     );
   }
 }
 
+class _Form extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 463,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+      ),
+      padding: EdgeInsets.fromLTRB(50, 76, 50, 76),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('👏 Hi，欢迎登录～'),
+          const Padding(padding: EdgeInsets.all(6),),
+          const Text('看个比赛票务管理平台', style: TextStyle(color: Color(0xff16181d), fontSize: 34)),
+          /*<p class="hi_p_style"></p>
+<h3 class="title" style="text-align: left; color: #16181d">
+看个比赛票务管理平台
+</h3>*/   const Padding(padding: EdgeInsets.all(33),),
+          _UsernameInput(),
+          const Padding(padding: EdgeInsets.all(12),),
+          _PasswordInput(),
+          const Padding(padding: EdgeInsets.all(12),),
+          _CodeInput(),
+          const Padding(padding: EdgeInsets.all(28),),
+          _LoginButton(),
+        ],
+      ),
+    );
+  }
+}
 class _UsernameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -77,8 +109,12 @@ class _UsernameInput extends StatelessWidget {
         context.read<LoginBloc>().add(LoginUsernameChanged(username));
       },
       decoration: InputDecoration(
-        labelText: 'username',
-        errorText: displayError != null ? 'invalid username' : null,
+        labelText: '账号',
+        prefixIcon: Icon(Icons.person),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(width: 1)
+        ),
+        errorText: displayError != null ? '请输入您的账号' : null,
       ),
     );
   }
@@ -95,8 +131,12 @@ class _PasswordInput extends StatelessWidget {
       },
       obscureText: true,
       decoration: InputDecoration(
-        labelText: 'password',
-        errorText: displayError != null ? 'invalid password' : null,
+        labelText: '密码',
+        prefixIcon: Icon(Icons.lock),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(width: 1)
+        ),
+        errorText: displayError != null ? '请输入您的密码' : null,
       ),
     );
   }
@@ -108,31 +148,36 @@ class _CodeInput extends StatelessWidget {
     final displayError = context.select((LoginBloc bloc) => bloc.state.code.displayError);
     final codeImg = context.select((LoginBloc bloc) => bloc.state.captchaImg);
     return Row(
-      spacing: 20,
+      spacing: 15,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          flex: 1,
+          flex: 2,
           child: TextField(
             key: const Key('loginForm_codeInput_textField'),
             onChanged: (value) {
               context.read<LoginBloc>().add(LoginCodeChanged(value));
             },
             decoration: InputDecoration(
-              labelText: 'code',
-              errorText: displayError != null ? 'invalid code' : null,
+              
+              labelText: '验证码',
+              prefixIcon: Icon(Icons.verified_user),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 1)
+              ),
+              errorText: displayError != null ? '请输入您的验证码' : null,
             ),
           ),
         ),
         SizedBox(
           width: 120,
-          height: 60,
+          height: 48,
           child: GestureDetector(
             onTap: () {
               context.read<LoginBloc>().add(LoginCaptchaClicked());
             },
             child: codeImg.isNotEmpty ? Image.memory(
               base64Decode(codeImg),
-              fit: BoxFit.cover,
             ) : null,
           ),
         )
@@ -149,13 +194,15 @@ class _LoginButton extends StatelessWidget {
       (LoginBloc bloc) => bloc.state.status.isInProgressOrSuccess,
     );
 
-    if (isInProgressOrSuccess) return const CircularProgressIndicator();
-
     final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
 
     return ElevatedButton(
-      onPressed: isValid ? () => context.read<LoginBloc>().add(const LoginSubmitted()) : null,
-      child: const Text('Login'),
-    );
+        style: ButtonStyle(
+          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
+          minimumSize: WidgetStatePropertyAll(Size(double.infinity, 56)),
+        ),
+        onPressed: isValid && !isInProgressOrSuccess ? () => context.read<LoginBloc>().add(const LoginSubmitted()) : null,
+        child: isInProgressOrSuccess ? const CircularProgressIndicator() : const Text('登录', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+      );
   }
 }

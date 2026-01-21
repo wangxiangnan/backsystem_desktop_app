@@ -45,6 +45,10 @@ class _AppViewState extends State<AppView> {
     final router = GetIt.I.get<GoRouter>();
     return MaterialApp.router(
       routerConfig: router,
+      theme: ThemeData(
+        primaryColor: Color(0xff605bff),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff605bff)),
+      ),
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (_, state) {
