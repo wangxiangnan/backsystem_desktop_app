@@ -7,8 +7,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -16,8 +15,7 @@ class HomePage extends StatelessWidget {
             _LogOutButton(),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 

@@ -16,10 +16,13 @@ class AuthenticationRepository {
 
   String? get token => _token;
   Stream<AuthenticationStatus> get status async* {
-    final token = getToken();
-    print('token: $token');
-    yield token == null || token.isEmpty ? AuthenticationStatus.unauthenticated : AuthenticationStatus.authenticated;
     yield* _controller.stream;
+  }
+
+  void verifyLoginStatus() {
+    final token = getToken();
+    final status = token == null || token.isEmpty ? AuthenticationStatus.unauthenticated : AuthenticationStatus.authenticated;
+    _controller.add(status);
   }
 
   Future<dynamic> getCaptchaData() async {

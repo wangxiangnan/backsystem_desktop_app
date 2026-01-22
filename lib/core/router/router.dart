@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:backsystem_desktop_app/features/ticket_unissued.dart/ticket_unissued.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:backsystem_desktop_app/features/login/login.dart';
 import 'package:backsystem_desktop_app/features/home/home.dart';
@@ -23,17 +23,57 @@ final ValueNotifier<RoutingConfig> _routingConfig = ValueNotifier<RoutingConfig>
           return SplashPage();
         },
       ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) {
-          return HomePage();
-        },
-      ),
+      
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          
+          return Scaffold(
+            body: Row(
+              children: [
+                NavigationRail(
+                  destinations: [
+                    NavigationRailDestination(
+
+                      icon: const Icon(Icons.home),
+                      label: const Text('首页'),
+                    ),
+                    NavigationRailDestination(
+                      icon: const Icon(Icons.unarchive),
+                      label: const Text('项目未出票'),
+                    ),
+                  ],
+                  selectedIndex: navigationShell.currentIndex,
+                  onDestinationSelected: (value) {
+                    navigationShell.goBranch(value);
+                  },
+                ),
+                VerticalDivider(width: 1, thickness: 1),
+                Expanded(child: navigationShell),
+              ],
+            ),
+          );
         },
-        branches: branches
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) {
+                  return HomePage();
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/ticket-unissued',
+                builder: (context, state) {
+                  return TicketUnissuedPage();
+                },
+              ),
+            ],
+          ),
+        ]
       ),
     ]
   ),

@@ -13,7 +13,7 @@ class App extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (_) => AuthenticationRepository(),
+          create: (_) => GetIt.I.get<AuthenticationRepository>(),
           dispose: (repository) => repository.dispose(),
         ),
         RepositoryProvider(

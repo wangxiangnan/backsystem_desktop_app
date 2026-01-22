@@ -1,0 +1,13 @@
+import 'package:flutter/cupertino.dart';
+import 'ticket_unissued_table.dart';
+
+class TicketUnissuedPage extends StatelessWidget {
+  const TicketUnissuedPage({ super.key });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TicketUnissuedTable(),
+    );
+  }
+}
