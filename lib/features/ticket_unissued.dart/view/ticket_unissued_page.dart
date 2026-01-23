@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'ticket_unissued_query.dart';
 import 'ticket_unissued_table.dart';
 
 class TicketUnissuedPage extends StatelessWidget {
@@ -6,8 +7,11 @@ class TicketUnissuedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TicketUnissuedTable(),
+    return Column(
+      children: [
+        TicketUnissuedQuery(),
+        TicketUnissuedTable(),
+      ],
     );
   }
 }
